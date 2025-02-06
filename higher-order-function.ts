@@ -1,3 +1,6 @@
+// HOF: được dùng trong lập trình hàm,
+// tăng tính tái sử dụng code, giảm duplicate code và dễ dàng kiểm thử
+
 const logWithTime = (message: string) => {
   const now = new Date().toISOString();
   console.log(`${now}: ${message}`);

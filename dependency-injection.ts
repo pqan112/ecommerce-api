@@ -12,8 +12,8 @@ class TimeLogger {
 }
 
 // inject console.log và console.warn vào TimeLogger
-const logWithTime = new TimeLogger(console.log);
-const warnWithTime = new TimeLogger(console.warn);
+const logWithTime2 = new TimeLogger(console.log);
+const warnWithTime2 = new TimeLogger(console.warn);
 
-logWithTime.log("Hello");
-warnWithTime.log("Hello");
+logWithTime2.log("Hello");
+warnWithTime2.log("Hello");

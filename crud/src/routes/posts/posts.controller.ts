@@ -11,8 +11,8 @@ export class PostsController {
   }
 
   @Post()
-  createPost(@Body() { id, title, content }: { id: string; title: string; content: string }) {
-    return this.postsService.createPost({ id, title, content })
+  createPost(@Body() { author_id, title, content }: { author_id: string; title: string; content: string }) {
+    return this.postsService.createPost({ author_id: Number(author_id), title, content })
   }
 
   @Get(':id')

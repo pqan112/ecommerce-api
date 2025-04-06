@@ -8,6 +8,15 @@ export class LoginBodyDTO {
   password: string
 }
 
+export class LoginResDTO {
+  access_token: string
+  refresh_token: string
+
+  constructor(partial?: Partial<LoginResDTO>) {
+    Object.assign(this, partial)
+  }
+}
+
 export class RegisterBodyDTO extends LoginBodyDTO {
   @IsString()
   name: string

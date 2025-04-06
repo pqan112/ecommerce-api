@@ -23,7 +23,7 @@ export class RegisterResDTO {
   created_at: Date
   updated_at: Date
 
-  // constructor(partial?: Partial<RegisterResDTO>) {
-  //   Object.assign(this, partial)
-  // }
+  constructor(partial?: Partial<RegisterResDTO>) {
+    Object.assign(this, partial)
+  }
 }

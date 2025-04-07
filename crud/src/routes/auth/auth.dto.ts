@@ -1,5 +1,6 @@
 import { Exclude } from 'class-transformer'
 import { IsString } from 'class-validator'
+import { IsMatch } from 'src/shared/decorators/custom-validator.decorator'
 
 export class LoginBodyDTO {
   @IsString()
@@ -21,6 +22,7 @@ export class RegisterBodyDTO extends LoginBodyDTO {
   @IsString()
   name: string
   @IsString()
+  @IsMatch('password', { message: 'password is not match' })
   confirm_password: string
 }
 

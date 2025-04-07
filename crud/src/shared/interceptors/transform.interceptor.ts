@@ -12,13 +12,6 @@ export class TransformInterceptor<T> implements NestInterceptor<T, Response<T>> 
     const ctx = context.switchToHttp()
     const response = ctx.getResponse()
     const statusCode = response.statusCode
-    return next.handle().pipe(
-      map((data) => {
-        if (response.req.originalUrl === '/auth/login') {
-          return { data, statusCode: 200 } // Custom status for login route
-        }
-        return { data, statusCode } // Default response structure with statusCode
-      }),
-    )
+    return next.handle().pipe(map((data) => ({ data, statusCode })))
   }
 }

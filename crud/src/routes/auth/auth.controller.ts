@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post } from '@nestjs/common'
+import { Body, Controller, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import {
   LoginBodyDTO,
   LoginResDTO,
@@ -8,6 +8,7 @@ import {
   RegisterResDTO,
 } from './auth.dto'
 import { AuthService } from './auth.service'
+import { AccessTokenGuard } from 'src/shared/guards/access-token.guard'
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +25,7 @@ export class AuthController {
     return new LoginResDTO(await this.authService.login(body))
   }
 
+  @UseGuards(AccessTokenGuard)
   @Post('refresh-token')
   @HttpCode(HttpStatus.OK)
   async refreshToken(@Body() body: RefreshTokenBodyDTO) {

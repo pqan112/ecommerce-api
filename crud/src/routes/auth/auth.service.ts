@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
-import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/healpers'
+import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
 import { HashingService } from 'src/shared/services/hashing.service'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { TokenService } from 'src/shared/services/token.service'

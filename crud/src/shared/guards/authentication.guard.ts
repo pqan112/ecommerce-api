@@ -1,6 +1,7 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { AUTH_TYPE_KEY, AuthType, AuthTypeType, ConditionGuard, ConditionGuardType } from '../constants/auth.constant'
+import { AUTH_TYPE_KEY, AuthType, ConditionGuard } from '../constants/auth.constant'
+import { AuthTypeDecoratorPayload } from '../decorators/auth.decorator'
 import { AccessTokenGuard } from './access-token.guard'
 import { APIKeyGuard } from './api-key.guard'
 
@@ -21,10 +22,10 @@ export class AuthenticationGuard implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const authTypeValue = this.reflector.getAllAndOverride<{
-      authTypes: AuthTypeType[]
-      options: { condition: ConditionGuardType }
-    }>(AUTH_TYPE_KEY, [context.getHandler(), context.getClass()]) ?? {
+    const authTypeValue = this.reflector.getAllAndOverride<AuthTypeDecoratorPayload>(AUTH_TYPE_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]) ?? {
       authTypes: [AuthType.None],
       options: { condition: ConditionGuard.And },
     }

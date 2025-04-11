@@ -34,6 +34,7 @@ export default tseslint.config(
       '@typescript-eslint/only-throw-error': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
       '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
       'prettier/prettier': [
         'warn',
         {

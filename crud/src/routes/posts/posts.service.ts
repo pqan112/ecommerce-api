@@ -13,12 +13,12 @@ export class PostsService {
     return `post ${id}`
   }
 
-  createPost({ author_id, title, content }: { author_id: number; title: string; content: string }) {
+  createPost({ userId, title, content }: { userId: number; title: string; content: string }) {
     return this.prismaService.post.create({
       data: {
         title,
         content,
-        author_id,
+        author_id: userId,
       },
     })
     // return {

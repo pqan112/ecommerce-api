@@ -3,6 +3,7 @@ import { PostsService } from './posts.service'
 import { Auth } from 'src/shared/decorators/auth.decorator'
 import { AuthType, ConditionGuard } from 'src/shared/constants/auth.constant'
 import { AuthenticationGuard } from 'src/shared/guards/authentication.guard'
+import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
 
 @Controller('posts')
 export class PostsController {
@@ -17,8 +18,9 @@ export class PostsController {
   }
 
   @Post()
-  createPost(@Body() { author_id, title, content }: { author_id: string; title: string; content: string }) {
-    return this.postsService.createPost({ author_id: Number(author_id), title, content })
+  @Auth([AuthType.Bearer])
+  createPost(@Body() { title, content }: { title: string; content: string }, @ActiveUser('userId') userId: number) {
+    return this.postsService.createPost({ userId, title, content })
   }
 
   @Get(':id')

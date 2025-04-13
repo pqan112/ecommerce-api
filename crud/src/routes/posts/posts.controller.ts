@@ -4,6 +4,7 @@ import { Auth } from 'src/shared/decorators/auth.decorator'
 import { AuthType, ConditionGuard } from 'src/shared/constants/auth.constant'
 import { AuthenticationGuard } from 'src/shared/guards/authentication.guard'
 import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
+import { CreatePostBodyDTO, GetPostItemDTO, UpdatePostBodyDTO } from './post.dto'
 
 @Controller('posts')
 export class PostsController {
@@ -13,28 +14,30 @@ export class PostsController {
   @Auth([AuthType.Bearer, AuthType.ApiKey], { condition: ConditionGuard.Or })
   @UseGuards(AuthenticationGuard)
   @Get()
-  getPosts() {
-    return this.postsService.getPosts()
+  getPosts(@ActiveUser('userId') userId: number) {
+    return this.postsService.getPosts(userId).then((posts) => posts.map((post) => new GetPostItemDTO(post)))
   }
 
   @Post()
   @Auth([AuthType.Bearer])
-  createPost(@Body() { title, content }: { title: string; content: string }, @ActiveUser('userId') userId: number) {
-    return this.postsService.createPost({ userId, title, content })
+  async createPost(@Body() body: CreatePostBodyDTO, @ActiveUser('userId') userId: number) {
+    return new GetPostItemDTO(await this.postsService.createPost({ userId, body }))
   }
 
   @Get(':id')
-  getPost(@Param('id') id: string) {
-    return this.postsService.getPost(id)
+  async getPost(@Param('id') id: string) {
+    return new GetPostItemDTO(await this.postsService.getPost(Number(id)))
   }
 
   @Put(':id')
-  updatePost(@Body() body: { id: string; title: string; content: string }, @Param('id') id: string) {
-    return this.postsService.updatePost(id, body)
+  @Auth([AuthType.Bearer])
+  async updatePost(@Body() body: UpdatePostBodyDTO, @Param('id') id: string, @ActiveUser('userId') userId: number) {
+    return new GetPostItemDTO(await this.postsService.updatePost({ postId: Number(id), userId, body }))
   }
 
   @Delete(':id')
-  deletePost(@Param('id') id: string) {
-    return this.postsService.deletePost(id)
+  @Auth([AuthType.Bearer])
+  async deletePost(@Param('id') id: string, @ActiveUser('userId') userId: number): Promise<null> {
+    return this.postsService.deletePost(Number(id), userId)
   }
 }

@@ -113,7 +113,7 @@ export class AuthService {
     await this.prismaService.refreshToken.create({
       data: {
         token: refresh_token,
-        user_id: payload.userId,
+        userId: payload.userId,
         exprired_at: new Date(decodedRefreshToken.exp * 1000),
       },
     })

@@ -23,7 +23,7 @@ export class RegisterBodyDTO extends LoginBodyDTO {
   name: string
   @IsString()
   @IsMatch('password', { message: 'password is not match' })
-  confirm_password: string
+  confirmPassword: string
 }
 
 export class RegisterResDTO {

@@ -16,11 +16,10 @@ export class AuthController {
 
   @Post('otp')
   @HttpCode(HttpStatus.OK)
-  sendOTP(@Body() body: SendOTPBodyDTO) {
-    return this.authService.sendOTP(body)
+  async sendOTP(@Body() body: SendOTPBodyDTO) {
+    return await this.authService.sendOTP(body)
   }
 
-  0
   @Post('login')
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: any) {

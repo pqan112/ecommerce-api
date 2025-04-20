@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
-import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
+import { generateOTP, isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
 import { HashingService } from 'src/shared/services/hashing.service'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { TokenService } from 'src/shared/services/token.service'
@@ -7,6 +7,10 @@ import { RegisterBodyDTO, SendOTPBodyDTO } from './auth.dto'
 import { RolesService } from './roles.service'
 import { RegisterBodyType } from './auth.model'
 import { AuthRepository } from './auth.repository'
+import { SharedUserRepository } from 'src/shared/repositories/shared-user.repository'
+import { addMilliseconds } from 'date-fns'
+import ms from 'ms'
+import envConfig from 'src/shared/config'
 
 @Injectable()
 export class AuthService {
@@ -16,6 +20,7 @@ export class AuthService {
     private readonly prismaService: PrismaService,
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
+    private readonly sharedUserRepository: SharedUserRepository,
   ) {}
 
   private async generateTokens(payload: { userId: number }) {
@@ -36,6 +41,8 @@ export class AuthService {
 
   async register(body: RegisterBodyType) {
     try {
+      // 1. Đăng ký
+      // mặc định đăng ký tài khoản là người dùng là client -> getClientRoleId
       const clientRoleId = await this.rolesService.getClientRoleId()
       const hashedPassword = await this.hashingService.hash(body.password)
       return await this.authRepository.createUser({
@@ -46,15 +53,40 @@ export class AuthService {
         roleId: clientRoleId,
       })
     } catch (error) {
+      // 2. Nếu lỗi là unique constraint thì trả về lỗi email đã tồn tại
       if (isUniqueConstraintPrismaError(error)) {
-        throw new ConflictException('Email đã tồn tại')
+        throw new UnprocessableEntityException([
+          {
+            path: 'email',
+            message: 'Email already exists',
+          },
+        ])
       }
       throw error
     }
   }
 
-  sendOTP(body: SendOTPBodyDTO) {
-    console.log('sendOTP', body)
+  async sendOTP(body: SendOTPBodyDTO) {
+    // 1. nếu là gửi mã xác thực cho người dùng mới thì kiểm tra xem email đã tồn tại trong DB chưa
+    const user = await this.sharedUserRepository.findUnique({ email: body.email })
+    if (user) {
+      throw new UnprocessableEntityException([
+        {
+          path: 'email',
+          message: 'Email already exists',
+        },
+      ])
+    }
+    // 2. tạo mã OTP
+    const code = generateOTP()
+    const verificationCode = await this.authRepository.createVerificationCode({
+      email: body.email,
+      code,
+      type: body.type,
+      expiresAt: addMilliseconds(new Date(), ms(envConfig.OTP_EXPIRES_IN)),
+    })
+    // TODO: 3. gửi email
+    return verificationCode
   }
 
   async login(body: any) {

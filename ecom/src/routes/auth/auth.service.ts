@@ -5,6 +5,8 @@ import { PrismaService } from 'src/shared/services/prisma.service'
 import { TokenService } from 'src/shared/services/token.service'
 import { RegisterBodyDTO } from './auth.dto'
 import { RolesService } from './roles.service'
+import { RegisterBodyType } from './auth.model'
+import { AuthRepository } from './auth.repository'
 
 @Injectable()
 export class AuthService {
@@ -12,6 +14,7 @@ export class AuthService {
     private readonly rolesService: RolesService,
     private readonly hashingService: HashingService,
     private readonly prismaService: PrismaService,
+    private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
   ) {}
 
@@ -31,24 +34,17 @@ export class AuthService {
     return { accessToken, refreshToken }
   }
 
-  async register(body: RegisterBodyDTO) {
+  async register(body: RegisterBodyType) {
     try {
       const clientRoleId = await this.rolesService.getClientRoleId()
       const hashedPassword = await this.hashingService.hash(body.password)
-      const user = await this.prismaService.user.create({
-        data: {
-          email: body.email,
-          password: hashedPassword,
-          name: body.name,
-          phoneNumber: body.phoneNumber,
-          roleId: clientRoleId,
-        },
-        omit: {
-          password: true,
-          totpSecret: true,
-        },
+      return await this.authRepository.createUser({
+        email: body.email,
+        name: body.name,
+        phoneNumber: body.phoneNumber,
+        password: hashedPassword,
+        roleId: clientRoleId,
       })
-      return user
     } catch (error) {
       if (isUniqueConstraintPrismaError(error)) {
         throw new ConflictException('Email đã tồn tại')

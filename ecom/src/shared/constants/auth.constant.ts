@@ -11,5 +11,11 @@ export const ConditionGuard = {
   Or: 'or',
 } as const
 
+export const UserStatus = {
+  ACTIVE: 'ACTIVE',
+  INACTIVE: 'INACTIVE',
+  BLOCKED: 'BLOCKED',
+} as const
+
 export type AuthTypeType = (typeof AuthType)[keyof typeof AuthType]
 export type ConditionGuardType = (typeof ConditionGuard)[keyof typeof ConditionGuard]

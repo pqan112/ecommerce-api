@@ -3,7 +3,7 @@ import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared
 import { HashingService } from 'src/shared/services/hashing.service'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { TokenService } from 'src/shared/services/token.service'
-import { RegisterBodyDTO } from './auth.dto'
+import { RegisterBodyDTO, SendOTPBodyDTO } from './auth.dto'
 import { RolesService } from './roles.service'
 import { RegisterBodyType } from './auth.model'
 import { AuthRepository } from './auth.repository'
@@ -51,6 +51,10 @@ export class AuthService {
       }
       throw error
     }
+  }
+
+  sendOTP(body: SendOTPBodyDTO) {
+    console.log('sendOTP', body)
   }
 
   async login(body: any) {

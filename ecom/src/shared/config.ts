@@ -24,6 +24,7 @@ const configSchema = z.object({
   ADMIN_PASSWORD: z.string(),
   ADMIN_EMAIL: z.string(),
   ADMIN_PHONENUMBER: z.string(),
+  OTP_EXPIRES_IN: z.string(),
 })
 
 // enableImplicitConversion: true ép kiểu cho giá trị khai báo trong .env

@@ -11,6 +11,7 @@ import { SharedUserRepository } from 'src/shared/repositories/shared-user.reposi
 import { addMilliseconds } from 'date-fns'
 import ms from 'ms'
 import envConfig from 'src/shared/config'
+import { TypeOfVerificationCode } from 'src/shared/constants/auth.constant'
 
 @Injectable()
 export class AuthService {
@@ -41,6 +42,32 @@ export class AuthService {
 
   async register(body: RegisterBodyType) {
     try {
+      const verificationCode = await this.authRepository.findUniqueVerificationCode({
+        email: body.email,
+        code: body.code,
+        type: TypeOfVerificationCode.REGISTER,
+      })
+
+      console.log('verificationCode', verificationCode)
+
+      if (!verificationCode) {
+        throw new UnprocessableEntityException([
+          {
+            path: 'code',
+            message: 'Invalid OTP code',
+          },
+        ])
+      }
+
+      if (verificationCode.expiresAt < new Date()) {
+        throw new UnprocessableEntityException([
+          {
+            path: 'code',
+            message: 'OTP code has expired',
+          },
+        ])
+      }
+
       // 1. Đăng ký
       // mặc định đăng ký tài khoản là người dùng là client -> getClientRoleId
       const clientRoleId = await this.rolesService.getClientRoleId()

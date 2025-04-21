@@ -22,5 +22,6 @@ export const TypeOfVerificationCode = {
   FORGOT_PASSWORD: 'FORGOT_PASSWORD',
 } as const
 
+export type TypeOfVerificationCodeType = (typeof TypeOfVerificationCode)[keyof typeof TypeOfVerificationCode]
 export type AuthTypeType = (typeof AuthType)[keyof typeof AuthType]
 export type ConditionGuardType = (typeof ConditionGuard)[keyof typeof ConditionGuard]

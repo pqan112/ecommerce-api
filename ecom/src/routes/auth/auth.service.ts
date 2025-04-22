@@ -12,6 +12,7 @@ import { addMilliseconds } from 'date-fns'
 import ms from 'ms'
 import envConfig from 'src/shared/config'
 import { TypeOfVerificationCode } from 'src/shared/constants/auth.constant'
+import { EmailService } from 'src/shared/services/email.service'
 
 @Injectable()
 export class AuthService {
@@ -22,6 +23,7 @@ export class AuthService {
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
     private readonly sharedUserRepository: SharedUserRepository,
+    private readonly emailService: EmailService,
   ) {}
 
   private async generateTokens(payload: { userId: number }) {
@@ -113,6 +115,19 @@ export class AuthService {
       expiresAt: addMilliseconds(new Date(), ms(envConfig.OTP_EXPIRES_IN)),
     })
     // TODO: 3. gửi email
+    const { error } = await this.emailService.sendOTP({
+      email: body.email,
+      code: verificationCode.code,
+    })
+    if (error) {
+      throw new UnprocessableEntityException([
+        {
+          message: 'Send email failed',
+          path: 'code',
+        },
+      ])
+    }
+
     return verificationCode
   }
 

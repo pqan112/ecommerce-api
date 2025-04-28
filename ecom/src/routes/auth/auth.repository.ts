@@ -9,10 +9,10 @@ export class AuthRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async createUser(
-    user: Omit<RegisterBodyType, 'confirmPassword' | 'code'> & Pick<UserType, 'roleId'>,
+    payload: Omit<RegisterBodyType, 'confirmPassword' | 'code'> & Pick<UserType, 'roleId'>,
   ): Promise<Omit<UserType, 'password' | 'totpSecret'>> {
     return await this.prismaService.user.create({
-      data: user,
+      data: payload,
       omit: {
         password: true,
         totpSecret: true,
@@ -46,6 +46,12 @@ export class AuthRepository {
   ): Promise<VerificationCodeType | null> {
     return this.prismaService.verificationCode.findUnique({
       where: payload,
+    })
+  }
+
+  async createRefreshToken(payload: { token: string; userId: number; expiresAt: Date; deviceId: number }) {
+    return this.prismaService.refreshToken.create({
+      data: payload,
     })
   }
 }

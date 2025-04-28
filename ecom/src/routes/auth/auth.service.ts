@@ -1,18 +1,18 @@
-import { ConflictException, Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
-import { generateOTP, isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
-import { HashingService } from 'src/shared/services/hashing.service'
-import { PrismaService } from 'src/shared/services/prisma.service'
-import { TokenService } from 'src/shared/services/token.service'
-import { RegisterBodyDTO, SendOTPBodyDTO } from './auth.dto'
-import { RolesService } from './roles.service'
-import { RegisterBodyType } from './auth.model'
-import { AuthRepository } from './auth.repository'
-import { SharedUserRepository } from 'src/shared/repositories/shared-user.repository'
+import { Injectable, UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
 import { addMilliseconds } from 'date-fns'
 import ms from 'ms'
 import envConfig from 'src/shared/config'
 import { TypeOfVerificationCode } from 'src/shared/constants/auth.constant'
+import { generateOTP, isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
+import { SharedUserRepository } from 'src/shared/repositories/shared-user.repository'
 import { EmailService } from 'src/shared/services/email.service'
+import { HashingService } from 'src/shared/services/hashing.service'
+import { PrismaService } from 'src/shared/services/prisma.service'
+import { TokenService } from 'src/shared/services/token.service'
+import { SendOTPBodyDTO } from './auth.dto'
+import { LoginBodyType, RegisterBodyType } from './auth.model'
+import { AuthRepository } from './auth.repository'
+import { RolesService } from './roles.service'
 
 @Injectable()
 export class AuthService {
@@ -32,12 +32,11 @@ export class AuthService {
       this.tokenService.signRefreshToken(payload),
     ])
     const decodedRefreshToken = await this.tokenService.verifyRefreshToken(refreshToken)
-    await this.prismaService.refreshToken.create({
-      data: {
-        token: refreshToken,
-        userId: payload.userId,
-        expiresAt: new Date(decodedRefreshToken.exp * 1000),
-      },
+    await this.authRepository.createRefreshToken({
+      token: refreshToken,
+      userId: payload.userId,
+      expiresAt: new Date(decodedRefreshToken.exp * 1000),
+      deviceId: 1, // TODO: get deviceId from request
     })
     return { accessToken, refreshToken }
   }
@@ -131,14 +130,17 @@ export class AuthService {
     return verificationCode
   }
 
-  async login(body: any) {
-    const user = await this.prismaService.user.findUnique({
-      where: {
-        email: body.email,
-      },
+  async login(body: LoginBodyType) {
+    const user = await this.sharedUserRepository.findUnique({
+      email: body.email,
     })
     if (!user) {
-      throw new UnauthorizedException('Account is not exist')
+      throw new UnprocessableEntityException([
+        {
+          path: 'email',
+          message: 'Email does not exist',
+        },
+      ])
     }
     const isPasswordMatch = await this.hashingService.compare(body.password, user.password)
     if (!isPasswordMatch) {

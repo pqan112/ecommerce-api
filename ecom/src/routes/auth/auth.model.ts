@@ -57,6 +57,28 @@ export const RefreshTokenBodySchema = z
   .strict()
 export const RefreshTokenResSchema = LoginResSchema
 
+export const DeviceModelSchema = z.object({
+  id: z.number(),
+  userId: z.number(),
+  userAgent: z.string(),
+  ip: z.string(),
+  lastActive: z.date(),
+  createdAt: z.date(),
+  isActive: z.boolean(),
+})
+
+export const RoleSchema = z.object({
+  id: z.number(),
+  name: z.string(),
+  description: z.string(),
+  isActive: z.boolean(),
+  createdById: z.number().nullable(),
+  updatedById: z.number().nullable(),
+  deletedAt: z.date().nullable(),
+  createdAt: z.date(),
+  updatedAt: z.date(),
+})
+
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>
 export type RegisterResType = z.infer<typeof RegisterResSchema>
 export type VerificationCodeType = z.infer<typeof VerificationCodeSchema>
@@ -65,3 +87,5 @@ export type LoginBodyType = z.infer<typeof LoginBodySchema>
 export type LoginResType = z.infer<typeof LoginResSchema>
 export type RefreshTokenBodyType = z.infer<typeof RefreshTokenBodySchema>
 export type RefreshTokenResType = z.infer<typeof RefreshTokenResSchema>
+export type DeviceType = z.infer<typeof DeviceModelSchema>
+export type RoleType = z.infer<typeof RoleSchema>

@@ -13,6 +13,7 @@ import { SendOTPBodyDTO } from './auth.dto'
 import { LoginBodyType, RegisterBodyType } from './auth.model'
 import { AuthRepository } from './auth.repository'
 import { RolesService } from './roles.service'
+import { AccessTokenPayloadCreate } from 'src/shared/types/jwt.type'
 
 @Injectable()
 export class AuthService {
@@ -26,9 +27,14 @@ export class AuthService {
     private readonly emailService: EmailService,
   ) {}
 
-  private async generateTokens(payload: { userId: number }) {
+  private async generateTokens(payload: AccessTokenPayloadCreate) {
     const [accessToken, refreshToken] = await Promise.all([
-      this.tokenService.signAccessToken(payload),
+      this.tokenService.signAccessToken({
+        userId: payload.userId,
+        deviceId: payload.deviceId,
+        roleId: payload.roleId,
+        roleName: payload.roleName,
+      }),
       this.tokenService.signRefreshToken(payload),
     ])
     const decodedRefreshToken = await this.tokenService.verifyRefreshToken(refreshToken)
@@ -36,7 +42,7 @@ export class AuthService {
       token: refreshToken,
       userId: payload.userId,
       expiresAt: new Date(decodedRefreshToken.exp * 1000),
-      deviceId: 1, // TODO: get deviceId from request
+      deviceId: payload.deviceId ?? 1, // TODO: get deviceId from request
     })
     return { accessToken, refreshToken }
   }
@@ -130,8 +136,8 @@ export class AuthService {
     return verificationCode
   }
 
-  async login(body: LoginBodyType) {
-    const user = await this.sharedUserRepository.findUnique({
+  async login(body: LoginBodyType & { userAgent: string; ip: string }) {
+    const user = await this.authRepository.findUniqueUserIncludeRole({
       email: body.email,
     })
     if (!user) {
@@ -151,37 +157,48 @@ export class AuthService {
         },
       ])
     }
-    const tokens = await this.generateTokens({ userId: user.id })
+    const device = await this.authRepository.createDevice({
+      userId: user.id,
+      userAgent: body.userAgent, // TODO: get user agent from request
+      ip: body.ip, // TODO: get ip from request
+    })
+
+    const tokens = await this.generateTokens({
+      userId: user.id,
+      deviceId: device.id,
+      roleId: user.roleId,
+      roleName: user.role.name,
+    })
     return tokens
   }
 
-  async refreshToken(refreshToken: string) {
-    try {
-      // 1. Kiểm tra refreshToken có hợp lệ không
-      const { userId } = await this.tokenService.verifyRefreshToken(refreshToken)
-      // 2. Kiểm tra refreshToken có tồn tại trong database không
-      await this.prismaService.refreshToken.findUniqueOrThrow({
-        where: {
-          token: refreshToken,
-        },
-      })
-      // 3. Xóa refreshToken cũ
-      await this.prismaService.refreshToken.delete({
-        where: {
-          token: refreshToken,
-        },
-      })
-      // 4. Tạo mới accessToken và refreshToken
-      return await this.generateTokens({ userId })
-    } catch (error) {
-      // Trường hợp đã refresh token rồi, hãy thông báo cho user biết
-      // refresh token của họ đã bị đánh cắp
-      if (isNotFoundPrismaError(error)) {
-        throw new UnauthorizedException('Refresh token has been revoked')
-      }
-      throw new UnauthorizedException()
-    }
-  }
+  // async refreshToken(refreshToken: string) {
+  //   try {
+  //     // 1. Kiểm tra refreshToken có hợp lệ không
+  //     const { userId } = await this.tokenService.verifyRefreshToken(refreshToken)
+  //     // 2. Kiểm tra refreshToken có tồn tại trong database không
+  //     await this.prismaService.refreshToken.findUniqueOrThrow({
+  //       where: {
+  //         token: refreshToken,
+  //       },
+  //     })
+  //     // 3. Xóa refreshToken cũ
+  //     await this.prismaService.refreshToken.delete({
+  //       where: {
+  //         token: refreshToken,
+  //       },
+  //     })
+  //     // 4. Tạo mới accessToken và refreshToken
+  //     return await this.generateTokens({ userId })
+  //   } catch (error) {
+  //     // Trường hợp đã refresh token rồi, hãy thông báo cho user biết
+  //     // refresh token của họ đã bị đánh cắp
+  //     if (isNotFoundPrismaError(error)) {
+  //       throw new UnauthorizedException('Refresh token has been revoked')
+  //     }
+  //     throw new UnauthorizedException()
+  //   }
+  // }
 
   async logout(refreshToken: string) {
     try {

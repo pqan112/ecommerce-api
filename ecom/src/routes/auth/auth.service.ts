@@ -42,7 +42,7 @@ export class AuthService {
       token: refreshToken,
       userId: payload.userId,
       expiresAt: new Date(decodedRefreshToken.exp * 1000),
-      deviceId: payload.deviceId ?? 1, // TODO: get deviceId from request
+      deviceId: payload.deviceId, // TODO: get deviceId from request
     })
     return { accessToken, refreshToken }
   }
@@ -54,8 +54,6 @@ export class AuthService {
         code: body.code,
         type: TypeOfVerificationCode.REGISTER,
       })
-
-      console.log('verificationCode', verificationCode)
 
       if (!verificationCode) {
         throw new UnprocessableEntityException([

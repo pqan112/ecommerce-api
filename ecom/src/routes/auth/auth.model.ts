@@ -67,6 +67,14 @@ export const DeviceModelSchema = z.object({
   isActive: z.boolean(),
 })
 
+export const RefreshTokenSchema = z.object({
+  token: z.string(),
+  userId: z.number(),
+  deviceId: z.number(),
+  expiresAt: z.date(),
+  createdAt: z.date(),
+})
+
 export const RoleSchema = z.object({
   id: z.number(),
   name: z.string(),
@@ -79,13 +87,17 @@ export const RoleSchema = z.object({
   updatedAt: z.date(),
 })
 
+export const LogoutBodySchema = RefreshTokenBodySchema
+
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>
 export type RegisterResType = z.infer<typeof RegisterResSchema>
 export type VerificationCodeType = z.infer<typeof VerificationCodeSchema>
 export type SendOTPBodyType = z.infer<typeof SendOTPBodySchema>
 export type LoginBodyType = z.infer<typeof LoginBodySchema>
 export type LoginResType = z.infer<typeof LoginResSchema>
+export type RefreshTokenType = z.infer<typeof RefreshTokenSchema>
 export type RefreshTokenBodyType = z.infer<typeof RefreshTokenBodySchema>
 export type RefreshTokenResType = z.infer<typeof RefreshTokenResSchema>
 export type DeviceType = z.infer<typeof DeviceModelSchema>
 export type RoleType = z.infer<typeof RoleSchema>
+export type LogoutBodyType = RefreshTokenBodyType

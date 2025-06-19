@@ -6,10 +6,12 @@ import {
   LoginBodyDTO,
   LoginResDTO,
   RefreshTokenBodyDTO,
+  RefreshTokenResDTO,
   RegisterBodyDTO,
   RegisterResDTO,
   SendOTPBodyDTO,
 } from './auth.dto'
+import { MessageResDTO } from 'src/shared/dtos/response.dto'
 
 @Controller('auth')
 export class AuthController {
@@ -36,12 +38,14 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @ZodSerializerDto(RefreshTokenResDTO)
   @HttpCode(HttpStatus.OK)
   refreshToken(@Body() body: RefreshTokenBodyDTO, @UserAgent() userAgent: string, @Ip() ip: string) {
     return this.authService.refreshToken({ refreshToken: body.refreshToken, userAgent, ip })
   }
 
   @Post('logout')
+  @ZodSerializerDto(MessageResDTO)
   logout(@Body() body: any) {
     return this.authService.logout(body.refreshToken)
   }

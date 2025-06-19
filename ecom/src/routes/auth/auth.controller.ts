@@ -11,14 +11,14 @@ export class AuthController {
   @Post('register')
   @ZodSerializerDto(RegisterResDTO)
   @HttpCode(HttpStatus.OK)
-  async register(@Body() body: RegisterBodyDTO) {
-    return await this.authService.register(body)
+  register(@Body() body: RegisterBodyDTO) {
+    return this.authService.register(body)
   }
 
   @Post('otp')
   @HttpCode(HttpStatus.OK)
-  async sendOTP(@Body() body: SendOTPBodyDTO) {
-    return await this.authService.sendOTP(body)
+  sendOTP(@Body() body: SendOTPBodyDTO) {
+    return this.authService.sendOTP(body)
   }
 
   @Post('login')
@@ -34,7 +34,7 @@ export class AuthController {
   // }
 
   @Post('logout')
-  async logout(@Body() body: any) {
+  logout(@Body() body: any) {
     return this.authService.logout(body.refreshToken)
   }
 }

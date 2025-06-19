@@ -20,9 +20,9 @@ export class AuthRepository {
     })
   }
 
-  async createVerificationCode(payload: Omit<VerificationCodeType, 'id' | 'createdAt'>): Promise<VerificationCode> {
+  createVerificationCode(payload: Omit<VerificationCodeType, 'id' | 'createdAt'>): Promise<VerificationCode> {
     // upsert: tạo mới hoặc cập nhật nếu đã tồn tại
-    return await this.prismaService.verificationCode.upsert({
+    return this.prismaService.verificationCode.upsert({
       where: {
         email: payload.email,
       },
@@ -34,7 +34,7 @@ export class AuthRepository {
     })
   }
 
-  async findUniqueVerificationCode(
+  findUniqueVerificationCode(
     payload:
       | { email: string }
       | { id: number }
@@ -49,13 +49,13 @@ export class AuthRepository {
     })
   }
 
-  async createRefreshToken(payload: { token: string; userId: number; expiresAt: Date; deviceId: number }) {
+  createRefreshToken(payload: { token: string; userId: number; expiresAt: Date; deviceId: number }) {
     return this.prismaService.refreshToken.create({
       data: payload,
     })
   }
 
-  async createDevice(
+  createDevice(
     payload: Pick<DeviceType, 'userId' | 'userAgent' | 'ip'> & Partial<Pick<DeviceType, 'lastActive' | 'isActive'>>,
   ) {
     return this.prismaService.device.create({
@@ -63,7 +63,7 @@ export class AuthRepository {
     })
   }
 
-  async findUniqueUserIncludeRole(
+  findUniqueUserIncludeRole(
     payload: { email: string } | { id: number },
   ): Promise<(UserType & { role: RoleType }) | null> {
     return this.prismaService.user.findUnique({

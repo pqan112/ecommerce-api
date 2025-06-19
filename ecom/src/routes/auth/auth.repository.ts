@@ -1,16 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { VerificationCode } from '@prisma/client'
 import { TypeOfVerificationCodeType } from 'src/shared/constants/auth.constant'
 import { UserType } from 'src/shared/models/shared-user.model'
 import { PrismaService } from 'src/shared/services/prisma.service'
-import {
-  DeviceType,
-  RefreshTokenResType,
-  RefreshTokenType,
-  RegisterBodyType,
-  RoleType,
-  VerificationCodeType,
-} from './auth.model'
+import { DeviceType, RefreshTokenType, RegisterBodyType, RoleType, VerificationCodeType } from './auth.model'
 @Injectable()
 export class AuthRepository {
   constructor(private readonly prismaService: PrismaService) {}
@@ -27,7 +19,7 @@ export class AuthRepository {
     })
   }
 
-  createVerificationCode(payload: Omit<VerificationCodeType, 'id' | 'createdAt'>): Promise<VerificationCode> {
+  createVerificationCode(payload: Omit<VerificationCodeType, 'id' | 'createdAt'>): Promise<VerificationCodeType> {
     // upsert: tạo mới hoặc cập nhật nếu đã tồn tại
     return this.prismaService.verificationCode.upsert({
       where: {
@@ -106,6 +98,28 @@ export class AuthRepository {
   deleteRefreshToken(payload: { token: string }): Promise<RefreshTokenType> {
     return this.prismaService.refreshToken.delete({
       where: payload,
+    })
+  }
+
+  updateUser(where: { id: number } | { email: string }, data: Partial<Omit<UserType, 'id'>>): Promise<UserType> {
+    return this.prismaService.user.update({
+      where,
+      data,
+    })
+  }
+
+  deleteVerificationCode(
+    where:
+      | { email: string }
+      | { id: number }
+      | {
+          email: string
+          code: string
+          type: TypeOfVerificationCodeType
+        },
+  ): Promise<VerificationCodeType> {
+    return this.prismaService.verificationCode.delete({
+      where,
     })
   }
 }

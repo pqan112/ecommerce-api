@@ -3,6 +3,7 @@ import { ZodSerializerDto } from 'nestjs-zod'
 import { AuthService } from 'src/routes/auth/auth.service'
 import { UserAgent } from 'src/shared/decorators/user-agent.decorator'
 import {
+  ForgotPasswordDTO,
   LoginBodyDTO,
   LoginResDTO,
   RefreshTokenBodyDTO,
@@ -25,6 +26,7 @@ export class AuthController {
   }
 
   @Post('otp')
+  @ZodSerializerDto(MessageResDTO)
   @HttpCode(HttpStatus.OK)
   sendOTP(@Body() body: SendOTPBodyDTO) {
     return this.authService.sendOTP(body)
@@ -46,7 +48,15 @@ export class AuthController {
 
   @Post('logout')
   @ZodSerializerDto(MessageResDTO)
+  @HttpCode(HttpStatus.OK)
   logout(@Body() body: any) {
     return this.authService.logout(body.refreshToken)
+  }
+
+  @Post('forgot-password')
+  @ZodSerializerDto(MessageResDTO)
+  @HttpCode(HttpStatus.OK)
+  forgotPassword(@Body() body: ForgotPasswordDTO) {
+    return this.authService.forgotPassword(body)
   }
 }

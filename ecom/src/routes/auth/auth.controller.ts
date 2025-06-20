@@ -11,14 +11,19 @@ import {
   RegisterBodyDTO,
   RegisterResDTO,
   SendOTPBodyDTO,
+  TwoFactorSetupResDTO,
 } from './auth.dto'
 import { MessageResDTO } from 'src/shared/dtos/response.dto'
+import { EmptyBodyDTO } from 'src/shared/dtos/request.dto'
+import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
+import { IsPublic } from 'src/shared/decorators/auth.decorator'
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
+  @IsPublic()
   @ZodSerializerDto(RegisterResDTO)
   @HttpCode(HttpStatus.OK)
   register(@Body() body: RegisterBodyDTO) {
@@ -26,6 +31,7 @@ export class AuthController {
   }
 
   @Post('otp')
+  @IsPublic()
   @ZodSerializerDto(MessageResDTO)
   @HttpCode(HttpStatus.OK)
   sendOTP(@Body() body: SendOTPBodyDTO) {
@@ -33,6 +39,7 @@ export class AuthController {
   }
 
   @Post('login')
+  @IsPublic()
   @ZodSerializerDto(LoginResDTO)
   @HttpCode(HttpStatus.OK)
   async login(@Body() body: LoginBodyDTO, @UserAgent() userAgent: string, @Ip() ip: string) {
@@ -40,6 +47,7 @@ export class AuthController {
   }
 
   @Post('refresh-token')
+  @IsPublic()
   @ZodSerializerDto(RefreshTokenResDTO)
   @HttpCode(HttpStatus.OK)
   refreshToken(@Body() body: RefreshTokenBodyDTO, @UserAgent() userAgent: string, @Ip() ip: string) {
@@ -54,9 +62,16 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @IsPublic()
   @ZodSerializerDto(MessageResDTO)
   @HttpCode(HttpStatus.OK)
   forgotPassword(@Body() body: ForgotPasswordDTO) {
     return this.authService.forgotPassword(body)
+  }
+
+  @Post('2fa/setup')
+  @ZodSerializerDto(TwoFactorSetupResDTO)
+  setupTwoFactorAuth(@Body() _: EmptyBodyDTO, @ActiveUser() userId: number) {
+    return this.authService.setupTwoFactorAuth(userId)
   }
 }

@@ -29,7 +29,7 @@ export const RegisterResSchema = UserSchema.omit({
 
 export const VerificationCodeSchema = z.object({
   id: z.number(),
-  email: z.string().email(),
+  email: z.string().email('Error.InvalidEmail'),
   code: z.string().length(6),
   type: z.nativeEnum(TypeOfVerificationCode),
   expiresAt: z.date(),
@@ -44,7 +44,12 @@ export const SendOTPBodySchema = VerificationCodeSchema.pick({
 export const LoginBodySchema = UserSchema.pick({
   email: true,
   password: true,
-}).strict()
+})
+  .extend({
+    totpCode: z.string().length(6).optional(), // 2FA code
+    code: z.string().length(6).optional(), // Email OTP code
+  })
+  .strict()
 export const LoginResSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
@@ -91,10 +96,10 @@ export const LogoutBodySchema = RefreshTokenBodySchema
 
 export const ForgotPasswordBodySchema = z
   .object({
-    email: z.string().email(),
-    code: z.string().length(6),
-    newPassword: z.string().min(6).max(100),
-    confirmNewPassword: z.string().min(6).max(100),
+    email: z.string().email('Error.InvalidEmail'),
+    code: z.string().length(6, 'Error.InvalidCode'),
+    newPassword: z.string().min(6, 'Error.InvalidPassword').max(100, 'Error.InvalidPassword'),
+    confirmNewPassword: z.string().min(6, 'Error.InvalidPassword').max(100, 'Error.InvalidPassword'),
   })
   .strict()
   .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
@@ -106,6 +111,32 @@ export const ForgotPasswordBodySchema = z
       })
     }
   })
+
+export const DisableTwoFactorBodySchema = z
+  .object({
+    totpCode: z.string().length(6).optional(),
+    code: z.string().length(6).optional(),
+  })
+  .strict()
+  .superRefine(({ totpCode, code }, ctx) => {
+    if ((totpCode !== undefined) === (code !== undefined)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['totpCode'],
+        message: 'Error.CodeInvalid',
+      })
+      ctx.addIssue({
+        code: 'custom',
+        path: ['code'],
+        message: 'Error.CodeInvalid',
+      })
+    }
+  })
+
+export const TwoFactorSetupResSchema = z.object({
+  secret: z.string(),
+  url: z.string(),
+})
 
 export type RegisterBodyType = z.infer<typeof RegisterBodySchema>
 export type RegisterResType = z.infer<typeof RegisterResSchema>
@@ -120,3 +151,5 @@ export type DeviceType = z.infer<typeof DeviceModelSchema>
 export type RoleType = z.infer<typeof RoleSchema>
 export type LogoutBodyType = RefreshTokenBodyType
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>
+export type DisableTwoFactorBodyType = z.infer<typeof DisableTwoFactorBodySchema>
+export type TwoFactorSetupResType = z.infer<typeof TwoFactorSetupResSchema>

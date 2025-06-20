@@ -27,6 +27,7 @@ const configSchema = z.object({
   OTP_EXPIRES_IN: z.string(),
   MAIL_ADDRESS_DEV: z.string(),
   RESEND_API_KEY: z.string(),
+  APP_NAME: z.string(),
 })
 
 // enableImplicitConversion: true ép kiểu cho giá trị khai báo trong .env

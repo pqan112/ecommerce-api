@@ -9,8 +9,16 @@ import { EmailService } from './services/email.service'
 import { HashingService } from './services/hashing.service'
 import { PrismaService } from './services/prisma.service'
 import { TokenService } from './services/token.service'
+import { TwoFactorService } from './services/2fa.service'
 
-const sharedServices = [PrismaService, HashingService, TokenService, SharedUserRepository, EmailService]
+const sharedServices = [
+  PrismaService,
+  HashingService,
+  TokenService,
+  SharedUserRepository,
+  EmailService,
+  TwoFactorService,
+]
 
 @Global()
 @Module({

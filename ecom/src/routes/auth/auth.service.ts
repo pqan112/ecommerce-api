@@ -24,6 +24,8 @@ import {
   ExpiredOTPException,
   IncorrectPasswordException,
   InvalidOTPException,
+  InvalidTOTPAndCodeException,
+  InvalidTOTPException,
   RefreshTokenAlreadyUsedException,
   TOTPAlreadyEnableException,
   UnauthorizedAccessException,
@@ -175,13 +177,34 @@ export class AuthService {
     if (!isPasswordMatch) {
       throw IncorrectPasswordException
     }
-    // 3. Tạo thiết bị mới để đưa vào accessToken và refreshToken
+    // 3. Nếu user đã bật mã 2FA thì kiểm tra mã 2FA TOTP code hoặc OTP code (email)
+    if (user.totpSecret) {
+      // nếu không có mã TOTP code và mã OTP code thì báo lỗi
+      if (!body.totpCode && !body.code) {
+        throw InvalidTOTPAndCodeException
+      }
+
+      if (body.totpCode) {
+        const isValid = this.twoFactorService.verifyTOTP({ email: user.email, token: body.totpCode })
+        if (!isValid) {
+          throw InvalidTOTPException
+        }
+      }
+    } else if (body.code) {
+      // Kiểm tra mã OTP có hợp lệ không
+      await this.validateVerificationCode({
+        email: user.email,
+        code: body.code,
+        type: TypeOfVerificationCode.LOGIN,
+      })
+    }
+    // 4. Tạo thiết bị mới để đưa vào accessToken và refreshToken
     const device = await this.authRepository.createDevice({
       userId: user.id,
       userAgent: body.userAgent,
       ip: body.ip,
     })
-    // 4. Tạo accessToken và refreshToken
+    // 5. Tạo accessToken và refreshToken
     const tokens = await this.generateTokens({
       userId: user.id,
       deviceId: device.id,

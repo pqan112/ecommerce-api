@@ -43,6 +43,12 @@ export const IncorrectPasswordException = new UnprocessableEntityException([
   },
 ])
 
+export const InvalidTOTPException = new UnprocessableEntityException([
+  {
+    message: 'Error.InvalidTOTP',
+    path: 'totpCode',
+  },
+])
 export const TOTPAlreadyEnableException = new UnprocessableEntityException([
   {
     path: 'totpCode',

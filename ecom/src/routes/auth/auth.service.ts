@@ -10,6 +10,7 @@ import { HashingService } from 'src/shared/services/hashing.service'
 import { TokenService } from 'src/shared/services/token.service'
 import { AccessTokenPayloadCreate } from 'src/shared/types/jwt.type'
 import {
+  DisableTwoFactorBodyType,
   ForgotPasswordBodyType,
   LoginBodyType,
   RefreshTokenBodyType,
@@ -28,6 +29,7 @@ import {
   InvalidTOTPException,
   RefreshTokenAlreadyUsedException,
   TOTPAlreadyEnableException,
+  TOTPNotEnabledException,
   UnauthorizedAccessException,
 } from './error.model'
 import { RolesService } from './roles.service'
@@ -160,8 +162,8 @@ export class AuthService {
     if (error) {
       throw EmailSendFailureException
     }
-
-    return { message: 'OTP has been sent successfully to your email' }
+    // 4. trả về thông báo thành công
+    return { message: 'MESSAGE.SendOTPSuccessfully' }
   }
 
   async login(body: LoginBodyType & { userAgent: string; ip: string }) {
@@ -185,7 +187,11 @@ export class AuthService {
       }
 
       if (body.totpCode) {
-        const isValid = this.twoFactorService.verifyTOTP({ email: user.email, token: body.totpCode })
+        const isValid = this.twoFactorService.verifyTOTP({
+          email: user.email,
+          secret: user.totpSecret,
+          token: body.totpCode,
+        })
         if (!isValid) {
           throw InvalidTOTPException
         }
@@ -256,7 +262,7 @@ export class AuthService {
       // 3. Cập nhật device là đã logout
       await this.authRepository.updateDevice(deletedRefreshToken.deviceId, { isActive: false })
       // 4. Trả về thông báo thành công
-      return { message: 'Logout successfully' }
+      return { message: 'Message.LogoutSuccessfully' }
     } catch (error) {
       // Trường hợp đã refresh token rồi, hãy thông báo cho user biết
       // refresh token của họ đã bị đánh cắp
@@ -298,7 +304,7 @@ export class AuthService {
       }),
     ])
     // 4. Trả về thông báo thành công
-    return { message: 'Password has been reset successfully' }
+    return { message: 'Message.ResetPasswordSuccessfully' }
   }
 
   async setupTwoFactorAuth(userId: number) {
@@ -319,6 +325,41 @@ export class AuthService {
     return {
       secret,
       uri,
+    }
+  }
+
+  async disableTwoFactorAuth(data: DisableTwoFactorBodyType & { userId: number }) {
+    const { userId, code, totpCode } = data
+    // 1. Lấy thông tin user, kiểm tra user đã bật 2FA chưa
+    const user = await this.sharedUserRepository.findUnique({ id: userId })
+    if (!user) {
+      throw EmailNotFoundException
+    }
+    if (!user.totpSecret) {
+      throw TOTPNotEnabledException
+    }
+    // 2. Kiểm tra mã TOTP có hợp lệ không
+    if (totpCode) {
+      const isValid = this.twoFactorService.verifyTOTP({
+        email: user.email,
+        secret: user.totpSecret,
+        token: totpCode,
+      })
+      if (!isValid) {
+        throw InvalidTOTPException
+      }
+    } else if (code) {
+      // 3. Kiểm tra mã OTP email có hợp lệ không
+      await this.validateVerificationCode({
+        email: user.email,
+        code,
+        type: TypeOfVerificationCode.DISABLE_2FA,
+      })
+    }
+    // 4. Cập nhật secret thành null
+    await this.authRepository.updateUser({ id: userId }, { totpSecret: null })
+    return {
+      message: 'Message.DisableTwoFactorAuthSuccessfully',
     }
   }
 }

@@ -16,8 +16,8 @@ export const RegisterBodySchema = UserSchema.pick({
     if (confirmPassword !== password) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Password and confirm password must match',
         path: ['confirmPassword'],
+        message: 'Password and confirm password must match',
       })
     }
   })
@@ -50,6 +50,20 @@ export const LoginBodySchema = UserSchema.pick({
     code: z.string().length(6).optional(), // Email OTP code
   })
   .strict()
+  .superRefine(({ totpCode, code }, ctx) => {
+    if ((totpCode !== undefined) === (code !== undefined)) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['totpCode'],
+        message: 'Error.CodeInvalid',
+      })
+      ctx.addIssue({
+        code: 'custom',
+        path: ['code'],
+        message: 'Error.CodeInvalid',
+      })
+    }
+  })
 export const LoginResSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string(),
@@ -106,8 +120,8 @@ export const ForgotPasswordBodySchema = z
     if (newPassword !== confirmNewPassword) {
       ctx.addIssue({
         code: 'custom',
-        message: 'Password and confirm password must match',
         path: ['confirmNewPassword'],
+        message: 'Password and confirm password must match',
       })
     }
   })

@@ -4,13 +4,14 @@ import envConfig from '../config'
 
 @Injectable()
 export class TwoFactorService {
-  private createTOTP(email: string) {
+  private createTOTP(email: string, secret?: string) {
     return new OTPAuth.TOTP({
       issuer: envConfig.APP_NAME,
       label: email,
       algorithm: 'SHA1',
       digits: 6,
       period: 30,
+      secret: secret || new OTPAuth.Secret(),
     })
   }
 
@@ -22,8 +23,8 @@ export class TwoFactorService {
     }
   }
 
-  verifyTOTP({ email, token }: { email: string; token: string }) {
-    const totp = this.createTOTP(email)
+  verifyTOTP({ email, token, secret }: { email: string; token: string; secret: string }) {
+    const totp = this.createTOTP(email, secret)
     const delta = totp.validate({ token, window: 1 })
     return delta !== null
   }

@@ -17,7 +17,7 @@ import {
   RegisterBodyType,
   SendOTPBodyType,
 } from './auth.model'
-import { AuthRepository } from './auth.repository'
+import { AuthRepository } from './auth.repo'
 import {
   EmailAlreadyInUseException,
   EmailNotFoundException,
@@ -158,12 +158,13 @@ export class AuthService {
     const { error } = await this.emailService.sendOTP({
       email: body.email,
       code,
+      type: body.type,
     })
     if (error) {
       throw EmailSendFailureException
     }
     // 4. trả về thông báo thành công
-    return { message: 'MESSAGE.SendOTPSuccessfully' }
+    return { message: 'Message.SendOTPSuccessfully' }
   }
 
   async login(body: LoginBodyType & { userAgent: string; ip: string }) {

@@ -1,35 +1,54 @@
 import React from 'react'
 import { Body, Container, Head, Heading, Html, Img, Section, Text } from '@react-email/components'
+import { TypeOfVerificationCode, TypeOfVerificationCodeType } from 'src/shared/constants/auth.constant'
 interface OTPEmailProps {
   otpCode: string
   title: string
+  type: TypeOfVerificationCodeType
 }
 
-export const OTPEmail = ({ otpCode, title }) => (
-  <Html>
-    <Head>
-      <title>{title}</title>
-    </Head>
-    <Body style={main}>
-      <Container style={container}>
-        <Img
-          src="https://nestjs.com/logo-small-gradient.d792062c.svg"
-          width="212"
-          height="88"
-          alt="Logo"
-          style={logo}
-        />
-        <Text style={tertiary}>OTP verification</Text>
-        <Heading style={secondary}>Enter OTP code to verify email before registration.</Heading>
-        <Section style={codeContainer}>
-          <Text style={code}>{otpCode}</Text>
-        </Section>
-        <Text style={paragraph}>Please ignore this email if you didn't verify email on our website</Text>
-      </Container>
-      <Text style={footer}>Securely powered by Sọp pe.</Text>
-    </Body>
-  </Html>
-)
+export const OTPEmail = ({ otpCode, title, type }) => {
+  const renderHeading = () => {
+    switch (type) {
+      case TypeOfVerificationCode.REGISTER:
+        return 'Enter OTP code to verify email before registration.'
+      case TypeOfVerificationCode.LOGIN:
+        return 'Enter OTP code to login'
+      case TypeOfVerificationCode.FORGOT_PASSWORD:
+        return 'Enter OTP code to reset your password'
+      case TypeOfVerificationCode.DISABLE_2FA:
+        return 'Enter OTP code to disable 2FA'
+      default:
+        return
+    }
+  }
+
+  return (
+    <Html>
+      <Head>
+        <title>{title}</title>
+      </Head>
+      <Body style={main}>
+        <Container style={container}>
+          <Img
+            src="https://nestjs.com/logo-small-gradient.d792062c.svg"
+            width="212"
+            height="88"
+            alt="Logo"
+            style={logo}
+          />
+          <Text style={tertiary}>OTP verification</Text>
+          <Heading style={secondary}>{renderHeading()}</Heading>
+          <Section style={codeContainer}>
+            <Text style={code}>{otpCode}</Text>
+          </Section>
+          <Text style={paragraph}>Please ignore this email if you didn't verify email on our website</Text>
+        </Container>
+        <Text style={footer}>Securely powered by Sọp pe.</Text>
+      </Body>
+    </Html>
+  )
+}
 
 OTPEmail.PreviewProps = {
   otpCode: '144833',

@@ -31,7 +31,7 @@ import {
   TOTPAlreadyEnableException,
   TOTPNotEnabledException,
   UnauthorizedAccessException,
-} from './error.model'
+} from './auth.error'
 import { RolesService } from './roles.service'
 import { TwoFactorService } from 'src/shared/services/2fa.service'
 

@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import {
+  CreatePermissionBodyType,
   GetPermissionDetailResType,
   GetPermissionParamsType,
   GetPermissionsQueryType,
   GetPermissionsResType,
+  PermissionType,
+  UpdatePermissionBodyType,
 } from './permission.model'
 
 @Injectable()
@@ -45,5 +48,62 @@ export class PermissionRepo {
         deletedAt: null,
       },
     })
+  }
+
+  create({ createdById, data }: { createdById: number; data: CreatePermissionBodyType }): Promise<PermissionType> {
+    return this.prismaService.permission.create({
+      data: {
+        ...data,
+        createdById,
+      },
+    })
+  }
+
+  update({
+    data,
+    id,
+    updatedById,
+  }: {
+    data: UpdatePermissionBodyType
+    id: number
+    updatedById: number
+  }): Promise<GetPermissionDetailResType> {
+    return this.prismaService.permission.update({
+      where: {
+        id,
+      },
+      data: {
+        ...data,
+        updatedById,
+      },
+    })
+  }
+
+  delete(
+    {
+      id,
+      deletedById,
+    }: {
+      id: number
+      deletedById: number
+    },
+    isHard?: boolean,
+  ): Promise<PermissionType> {
+    return isHard
+      ? this.prismaService.permission.delete({
+          where: {
+            id,
+          },
+        })
+      : this.prismaService.permission.update({
+          where: {
+            id,
+            deletedAt: null,
+          },
+          data: {
+            deletedAt: new Date(),
+            deletedById,
+          },
+        })
   }
 }

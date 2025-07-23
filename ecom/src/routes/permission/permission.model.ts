@@ -1,17 +1,5 @@
-import { HTTPMethod } from 'src/shared/constants/role.constant'
 import { z } from 'zod'
-
-export const PermissionSchema = z.object({
-  id: z.number(),
-  name: z.string().max(500),
-  description: z.string(),
-  path: z.string().max(1000),
-  method: z.nativeEnum(HTTPMethod),
-  createdById: z.number().nullable(),
-  updatedById: z.number().nullable(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
+import { PermissionSchema } from 'src/shared/models/shared-permission.model'
 
 export const GetPermissionsResSchema = z.object({
   data: z.array(PermissionSchema),

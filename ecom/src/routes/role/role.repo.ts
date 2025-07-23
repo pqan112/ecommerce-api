@@ -19,7 +19,7 @@ export class RoleRepo {
     const take = pagination.limit
 
     const [totalItems, data] = await Promise.all([
-      this.prismaService.role({
+      this.prismaService.role.count({
         where: {
           deletedAt: null,
         },
@@ -43,7 +43,7 @@ export class RoleRepo {
   }
 
   findById(params: GetRoleParamsType): Promise<RoleWithPermissionsType | null> {
-    return this.prismaService.role.findByUnique({
+    return this.prismaService.role.findUnique({
       where: { id: params.roleId, deletedAt: null },
       include: {
         permissions: true,
@@ -70,7 +70,7 @@ export class RoleRepo {
         name: data.name,
         description: data.description,
         isActive: data.isActive,
-        permission: {
+        permissions: {
           set: data.permissionIds.map((id) => ({ id })),
         },
         updatedById,
@@ -91,7 +91,7 @@ export class RoleRepo {
             deletedAt: null,
           },
           data: {
-            deletedAt: Date.now(),
+            deletedAt: new Date(),
             deletedById,
           },
         })

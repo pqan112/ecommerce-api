@@ -4,7 +4,7 @@ import { PermissionController } from './permission.controller'
 import { PermissionRepo } from './permission.repo'
 
 @Module({
-  providers: [PermissionService, PermissionRepo],
   controllers: [PermissionController],
+  providers: [PermissionService, PermissionRepo],
 })
 export class PermissionModule {}

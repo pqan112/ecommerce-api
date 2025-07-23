@@ -30,6 +30,8 @@ async function bootstrap() {
     })
     .filter((item) => item !== undefined)
 
+  console.log('availableRoutes', availableRoutes)
+
   // Tạo object permissionInDbMap với key là [method-path]
   const permissionInDbMap: Record<string, (typeof permissionsInDb)[0]> = permissionsInDb.reduce((acc, item) => {
     acc[`${item.method}-${item.path}`] = item

@@ -46,7 +46,11 @@ export class RoleRepo {
     return this.prismaService.role.findUnique({
       where: { id: params.roleId, deletedAt: null },
       include: {
-        permissions: true,
+        permissions: {
+          where: {
+            deletedAt: null,
+          },
+        },
       },
     })
   }
@@ -74,6 +78,13 @@ export class RoleRepo {
           set: data.permissionIds.map((id) => ({ id })),
         },
         updatedById,
+      },
+      include: {
+        permissions: {
+          where: {
+            deletedAt: null,
+          },
+        },
       },
     })
   }

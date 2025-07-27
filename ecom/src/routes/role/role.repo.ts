@@ -9,6 +9,7 @@ import {
   UpdateRoleBodyType,
 } from './role.model'
 import { PrismaService } from 'src/shared/services/prisma.service'
+import { OneOfPermissionIdsHasBeenDeleted } from './role.error'
 
 @Injectable()
 export class RoleRepo {
@@ -64,7 +65,31 @@ export class RoleRepo {
     })
   }
 
-  update({ data, id, updatedById }: { data: UpdateRoleBodyType; id: number; updatedById: number }): Promise<RoleType> {
+  async update({
+    data,
+    id,
+    updatedById,
+  }: {
+    data: UpdateRoleBodyType
+    id: number
+    updatedById: number
+  }): Promise<RoleType> {
+    // Kiểm tra nếu có bất cứ permissionId nào đã soft delete rồi thì không cho phép cập nhật
+    if (data.permissionIds.length > 0) {
+      const permissions = await this.prismaService.permission.findMany({
+        where: {
+          id: {
+            in: data.permissionIds,
+          },
+        },
+      })
+
+      const deletedPermissions = permissions.filter((permission) => permission.deletedAt)
+      if (deletedPermissions.length > 0) {
+        throw OneOfPermissionIdsHasBeenDeleted
+      }
+    }
+
     return this.prismaService.role.update({
       where: {
         id,

@@ -3,7 +3,7 @@ export const AUTH_TYPE_KEY = 'authType'
 export const AuthType = {
   Bearer: 'Bearer',
   None: 'None',
-  ApiKey: 'ApiKey',
+  APIKey: 'ApiKey',
 } as const
 
 export const ConditionGuard = {

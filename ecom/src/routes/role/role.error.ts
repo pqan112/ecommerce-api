@@ -1,4 +1,4 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { ForbiddenException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export const NotFoundRecordException = new NotFoundException('Error.Role.NotFound')
 
@@ -8,5 +8,7 @@ export const RoleAlreadyExistsException = new UnprocessableEntityException([
     path: 'name',
   },
 ])
+
+export const ProhibitedActionOnBaseRoleException = new ForbiddenException('Error.ProhibitedActionOnBaseRole')
 
 export const OneOfPermissionIdsHasBeenDeleted = new Error('Error.Role.OneOfPermissionIdsHasBeenDeleted')

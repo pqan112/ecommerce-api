@@ -1,8 +1,9 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { CreateRoleBodyType, GetRoleParamsType, GetRolesQueryType, UpdateRoleBodyType } from './role.model'
 import { RoleRepo } from './role.repo'
-import { NotFoundRecordException, RoleAlreadyExistsException } from './role.error'
+import { NotFoundRecordException, ProhibitedActionOnBaseRoleException, RoleAlreadyExistsException } from './role.error'
 import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
+import { RoleName } from 'src/shared/constants/role.constant'
 
 @Injectable()
 export class RoleService {
@@ -36,8 +37,18 @@ export class RoleService {
 
   async update({ data, id, updatedById }: { data: UpdateRoleBodyType; id: number; updatedById: number }) {
     try {
-      const role = await this.roleRepo.update({ data, id, updatedById })
-      return role
+      const role = await this.roleRepo.findById({ roleId: id })
+      if (!role) {
+        throw NotFoundRecordException
+      }
+
+      const baseRoles: string[] = [RoleName.Admin, RoleName.Client, RoleName.Seller]
+      if (baseRoles.includes(role.name)) {
+        throw ProhibitedActionOnBaseRoleException
+      }
+
+      const updatedRole = await this.roleRepo.update({ data, id, updatedById })
+      return updatedRole
     } catch (error) {
       if (isNotFoundPrismaError(error)) {
         throw NotFoundRecordException
@@ -54,6 +65,16 @@ export class RoleService {
 
   async delete({ id, deletedById }: { id: number; deletedById: number }) {
     try {
+      const role = await this.roleRepo.findById({ roleId: id })
+      if (!role) {
+        throw NotFoundRecordException
+      }
+
+      const baseRoles: string[] = [RoleName.Admin, RoleName.Client, RoleName.Seller]
+      if (baseRoles.includes(role.name)) {
+        throw ProhibitedActionOnBaseRoleException
+      }
+
       await this.roleRepo.delete({
         id,
         deletedById,

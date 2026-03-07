@@ -1,4 +1,10 @@
-import { Injectable, CanActivate, ExecutionContext, UnauthorizedException, ForbiddenException } from '@nestjs/common'
+import {
+  Injectable,
+  CanActivate,
+  ExecutionContext,
+  UnauthorizedException,
+  ForbiddenException,
+} from '@nestjs/common'
 import { REQUEST_USER_KEY } from 'src/shared/constants/auth.constant'
 import { HTTPMethod } from 'src/shared/constants/role.constant'
 import { PrismaService } from 'src/shared/services/prisma.service'
@@ -22,10 +28,13 @@ export class AccessTokenGuard implements CanActivate {
     return true
   }
 
-  private async extractAndValidateToken(request: any): Promise<AccessTokenPayload> {
+  private async extractAndValidateToken(
+    request: any,
+  ): Promise<AccessTokenPayload> {
     const accessToken = this.extractAccessTokenFromHeader(request)
     try {
-      const decodedAccessToken = await this.tokenService.verifyAccessToken(accessToken)
+      const decodedAccessToken =
+        await this.tokenService.verifyAccessToken(accessToken)
 
       request[REQUEST_USER_KEY] = decodedAccessToken
       return decodedAccessToken
@@ -42,7 +51,10 @@ export class AccessTokenGuard implements CanActivate {
     return accessToken
   }
 
-  private async validateUserPermission(decodedAccessToken: AccessTokenPayload, request: any): Promise<void> {
+  private async validateUserPermission(
+    decodedAccessToken: AccessTokenPayload,
+    request: any,
+  ): Promise<void> {
     const roleId: number = decodedAccessToken.roleId
     const path: string = request.route.path
     const method = request.method as keyof typeof HTTPMethod

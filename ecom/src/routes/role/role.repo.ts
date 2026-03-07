@@ -56,7 +56,13 @@ export class RoleRepo {
     })
   }
 
-  create({ data, createdById }: { data: CreateRoleBodyType; createdById: number }): Promise<RoleType> {
+  create({
+    data,
+    createdById,
+  }: {
+    data: CreateRoleBodyType
+    createdById: number
+  }): Promise<RoleType> {
     return this.prismaService.role.create({
       data: {
         ...data,
@@ -84,7 +90,9 @@ export class RoleRepo {
         },
       })
 
-      const deletedPermissions = permissions.filter((permission) => permission.deletedAt)
+      const deletedPermissions = permissions.filter(
+        (permission) => permission.deletedAt,
+      )
       if (deletedPermissions.length > 0) {
         throw OneOfPermissionIdsHasBeenDeleted
       }
@@ -114,7 +122,10 @@ export class RoleRepo {
     })
   }
 
-  delete({ id, deletedById }: { id: number; deletedById: number }, isHard?: boolean) {
+  delete(
+    { id, deletedById }: { id: number; deletedById: number },
+    isHard?: boolean,
+  ) {
     return isHard
       ? this.prismaService.role.delete({
           where: {

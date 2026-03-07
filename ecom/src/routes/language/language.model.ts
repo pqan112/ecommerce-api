@@ -34,7 +34,9 @@ export const UpdateLanguageBodySchema = LanguageSchema.pick({
 
 export type LanguageType = z.infer<typeof LanguageSchema>
 export type GetLanguagesResType = z.infer<typeof GetLanguagesResSchema>
-export type GetLanguageDetailResType = z.infer<typeof GetLanguageDetailResSchema>
+export type GetLanguageDetailResType = z.infer<
+  typeof GetLanguageDetailResSchema
+>
 export type CreateLanguageBodyType = z.infer<typeof CreateLanguageBodySchema>
 export type GetLanguageParamsType = z.infer<typeof GetLanguageParamsSchema>
 export type UpdateLanguageBodyType = z.infer<typeof UpdateLanguageBodySchema>

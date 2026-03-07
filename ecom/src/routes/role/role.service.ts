@@ -1,8 +1,20 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
-import { CreateRoleBodyType, GetRoleParamsType, GetRolesQueryType, UpdateRoleBodyType } from './role.model'
+import {
+  CreateRoleBodyType,
+  GetRoleParamsType,
+  GetRolesQueryType,
+  UpdateRoleBodyType,
+} from './role.model'
 import { RoleRepo } from './role.repo'
-import { NotFoundRecordException, ProhibitedActionOnBaseRoleException, RoleAlreadyExistsException } from './role.error'
-import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
+import {
+  NotFoundRecordException,
+  ProhibitedActionOnBaseRoleException,
+  RoleAlreadyExistsException,
+} from './role.error'
+import {
+  isNotFoundPrismaError,
+  isUniqueConstraintPrismaError,
+} from 'src/shared/helpers'
 import { RoleName } from 'src/shared/constants/role.constant'
 
 @Injectable()
@@ -23,7 +35,13 @@ export class RoleService {
     return role
   }
 
-  async create({ data, createdById }: { data: CreateRoleBodyType; createdById: number }) {
+  async create({
+    data,
+    createdById,
+  }: {
+    data: CreateRoleBodyType
+    createdById: number
+  }) {
     try {
       const role = await this.roleRepo.create({ data, createdById })
       return role
@@ -35,18 +53,36 @@ export class RoleService {
     }
   }
 
-  async update({ data, id, updatedById }: { data: UpdateRoleBodyType; id: number; updatedById: number }) {
+  /**
+   * Kiểm tra xem role có thuộc 1 trong 3 role cơ bản không
+   */
+  private async verifyRole(roleId: number) {
+    const role = await this.roleRepo.findById({ roleId })
+    if (!role) {
+      throw NotFoundRecordException
+    }
+    const baseRoles: string[] = [
+      RoleName.Admin,
+      RoleName.Client,
+      RoleName.Seller,
+    ]
+
+    if (baseRoles.includes(role.name)) {
+      throw ProhibitedActionOnBaseRoleException
+    }
+  }
+
+  async update({
+    data,
+    id,
+    updatedById,
+  }: {
+    data: UpdateRoleBodyType
+    id: number
+    updatedById: number
+  }) {
     try {
-      const role = await this.roleRepo.findById({ roleId: id })
-      if (!role) {
-        throw NotFoundRecordException
-      }
-
-      const baseRoles: string[] = [RoleName.Admin, RoleName.Client, RoleName.Seller]
-      if (baseRoles.includes(role.name)) {
-        throw ProhibitedActionOnBaseRoleException
-      }
-
+      await this.verifyRole(id)
       const updatedRole = await this.roleRepo.update({ data, id, updatedById })
       return updatedRole
     } catch (error) {
@@ -55,9 +91,6 @@ export class RoleService {
       }
       if (isUniqueConstraintPrismaError(error)) {
         throw RoleAlreadyExistsException
-      }
-      if (error instanceof Error) {
-        throw new BadRequestException(error.message)
       }
       throw error
     }
@@ -70,7 +103,11 @@ export class RoleService {
         throw NotFoundRecordException
       }
 
-      const baseRoles: string[] = [RoleName.Admin, RoleName.Client, RoleName.Seller]
+      const baseRoles: string[] = [
+        RoleName.Admin,
+        RoleName.Client,
+        RoleName.Seller,
+      ]
       if (baseRoles.includes(role.name)) {
         throw ProhibitedActionOnBaseRoleException
       }

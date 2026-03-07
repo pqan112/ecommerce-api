@@ -14,7 +14,9 @@ import {
 export class PermissionRepo {
   constructor(private prismaService: PrismaService) {}
 
-  async list(pagination: GetPermissionsQueryType): Promise<GetPermissionsResType> {
+  async list(
+    pagination: GetPermissionsQueryType,
+  ): Promise<GetPermissionsResType> {
     const skip = (pagination.page - 1) * pagination.limit
     const take = pagination.limit
     const [totalItems, data] = await Promise.all([
@@ -41,7 +43,9 @@ export class PermissionRepo {
     }
   }
 
-  findById({ permissionId }: GetPermissionParamsType): Promise<GetPermissionDetailResType | null> {
+  findById({
+    permissionId,
+  }: GetPermissionParamsType): Promise<GetPermissionDetailResType | null> {
     return this.prismaService.permission.findUnique({
       where: {
         id: permissionId,
@@ -50,7 +54,13 @@ export class PermissionRepo {
     })
   }
 
-  create({ createdById, data }: { createdById: number; data: CreatePermissionBodyType }): Promise<PermissionType> {
+  create({
+    createdById,
+    data,
+  }: {
+    createdById: number
+    data: CreatePermissionBodyType
+  }): Promise<PermissionType> {
     return this.prismaService.permission.create({
       data: {
         ...data,

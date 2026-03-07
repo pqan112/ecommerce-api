@@ -1,8 +1,17 @@
 import { Injectable } from '@nestjs/common'
 import { LanguageRepository } from './language.repo'
-import { LanguageAlreadyExistsException, NotFoundRecordException } from './language.error'
-import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
-import { CreateLanguageBodyType, UpdateLanguageBodyType } from './language.model'
+import {
+  LanguageAlreadyExistsException,
+  NotFoundRecordException,
+} from './language.error'
+import {
+  isNotFoundPrismaError,
+  isUniqueConstraintPrismaError,
+} from 'src/shared/helpers'
+import {
+  CreateLanguageBodyType,
+  UpdateLanguageBodyType,
+} from './language.model'
 
 @Injectable()
 export class LanguageService {
@@ -24,7 +33,13 @@ export class LanguageService {
     return language
   }
 
-  async create({ data, createdById }: { data: CreateLanguageBodyType; createdById: number }) {
+  async create({
+    data,
+    createdById,
+  }: {
+    data: CreateLanguageBodyType
+    createdById: number
+  }) {
     try {
       return await this.languageRepo.create({
         createdById,
@@ -38,7 +53,15 @@ export class LanguageService {
     }
   }
 
-  async update({ id, data, updatedById }: { id: string; data: UpdateLanguageBodyType; updatedById: number }) {
+  async update({
+    id,
+    data,
+    updatedById,
+  }: {
+    id: string
+    data: UpdateLanguageBodyType
+    updatedById: number
+  }) {
     try {
       const language = await this.languageRepo.update({
         id,

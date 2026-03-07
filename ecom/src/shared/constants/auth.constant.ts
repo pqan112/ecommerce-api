@@ -24,6 +24,8 @@ export const TypeOfVerificationCode = {
   DISABLE_2FA: 'DISABLE_2FA',
 } as const
 
-export type TypeOfVerificationCodeType = (typeof TypeOfVerificationCode)[keyof typeof TypeOfVerificationCode]
+export type TypeOfVerificationCodeType =
+  (typeof TypeOfVerificationCode)[keyof typeof TypeOfVerificationCode]
 export type AuthTypeType = (typeof AuthType)[keyof typeof AuthType]
-export type ConditionGuardType = (typeof ConditionGuard)[keyof typeof ConditionGuard]
+export type ConditionGuardType =
+  (typeof ConditionGuard)[keyof typeof ConditionGuard]

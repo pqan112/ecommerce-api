@@ -2,8 +2,14 @@ import { Body, Controller, Get, Put } from '@nestjs/common'
 import { ZodSerializerDto } from 'nestjs-zod'
 import { ProfileService } from './profile.service'
 import { ActiveUser } from 'src/shared/decorators/active-user.decorator'
-import { GetUserProfileResDTO, UpdateProfileResDTO } from 'src/shared/dtos/shared-user.dto'
-import { ChangePasswordBodyDTO, UpdateMeBodyDTO } from 'src/routes/profile/profile.dto'
+import {
+  GetUserProfileResDTO,
+  UpdateProfileResDTO,
+} from 'src/shared/dtos/shared-user.dto'
+import {
+  ChangePasswordBodyDTO,
+  UpdateMeBodyDTO,
+} from 'src/routes/profile/profile.dto'
 import { MessageResDTO } from 'src/shared/dtos/response.dto'
 
 @Controller('profile')
@@ -18,7 +24,10 @@ export class ProfileController {
 
   @Put()
   @ZodSerializerDto(UpdateProfileResDTO)
-  updateProfile(@Body() body: UpdateMeBodyDTO, @ActiveUser('userId') userId: number) {
+  updateProfile(
+    @Body() body: UpdateMeBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
     return this.profileService.updateProfile({
       userId,
       body,
@@ -27,7 +36,10 @@ export class ProfileController {
 
   @Put('change-password')
   @ZodSerializerDto(MessageResDTO)
-  changePassword(@Body() body: ChangePasswordBodyDTO, @ActiveUser('userId') userId: number) {
+  changePassword(
+    @Body() body: ChangePasswordBodyDTO,
+    @ActiveUser('userId') userId: number,
+  ) {
     return this.profileService.changePassword({
       userId,
       body,

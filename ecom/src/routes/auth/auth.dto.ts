@@ -28,5 +28,9 @@ export class LogoutBodyDTO extends createZodDto(LogoutBodySchema) {}
 
 export class ForgotPasswordDTO extends createZodDto(ForgotPasswordBodySchema) {}
 
-export class TwoFactorSetupResDTO extends createZodDto(TwoFactorSetupResSchema) {}
-export class DisableTwoFactorBodyDTO extends createZodDto(DisableTwoFactorBodySchema) {}
+export class TwoFactorSetupResDTO extends createZodDto(
+  TwoFactorSetupResSchema,
+) {}
+export class DisableTwoFactorBodyDTO extends createZodDto(
+  DisableTwoFactorBodySchema,
+) {}

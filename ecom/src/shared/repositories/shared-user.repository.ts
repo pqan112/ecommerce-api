@@ -4,9 +4,13 @@ import { UserType } from '../models/shared-user.model'
 import { RoleType } from 'src/routes/auth/auth.model'
 import { PermissionType } from '../models/shared-permission.model'
 
-type WhereUniqueUserType = { id: number; [key: string]: any } | { email: string; [key: string]: any }
+export type WhereUniqueUserType =
+  | { id: number; [key: string]: any }
+  | { email: string; [key: string]: any }
 
-type UserIncludeRolePermissionsType = UserType & { role: RoleType & { permissions: PermissionType[] } }
+type UserIncludeRolePermissionsType = UserType & {
+  role: RoleType & { permissions: PermissionType[] }
+}
 
 @Injectable()
 export class SharedUserRepository {
@@ -18,7 +22,9 @@ export class SharedUserRepository {
     })
   }
 
-  findUniqueIncludeRolePermissions(where: WhereUniqueUserType): Promise<UserIncludeRolePermissionsType | null> {
+  findUniqueIncludeRolePermissions(
+    where: WhereUniqueUserType,
+  ): Promise<UserIncludeRolePermissionsType | null> {
     return this.prismaService.user.findUnique({
       where,
       include: {
@@ -35,7 +41,10 @@ export class SharedUserRepository {
     })
   }
 
-  update(where: WhereUniqueUserType, data: Partial<UserType>): Promise<UserType | null> {
+  update(
+    where: WhereUniqueUserType,
+    data: Partial<UserType>,
+  ): Promise<UserType | null> {
     return this.prismaService.user.update({
       where,
       data,

@@ -45,7 +45,7 @@ export default tseslint.config(
           tabWidth: 2,
           endOfLine: 'auto',
           useTabs: false,
-          printWidth: 120,
+          printWidth: 80,
         },
       ],
     },

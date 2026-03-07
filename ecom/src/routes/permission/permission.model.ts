@@ -35,7 +35,13 @@ export const UpdatePermissionBodySchema = CreatePermissionBodySchema
 export type PermissionType = z.infer<typeof PermissionSchema>
 export type GetPermissionsResType = z.infer<typeof GetPermissionsResSchema>
 export type GetPermissionsQueryType = z.infer<typeof GetPermissionsQuerySchema>
-export type GetPermissionDetailResType = z.infer<typeof GetPermissionDetailResSchema>
-export type CreatePermissionBodyType = z.infer<typeof CreatePermissionBodySchema>
+export type GetPermissionDetailResType = z.infer<
+  typeof GetPermissionDetailResSchema
+>
+export type CreatePermissionBodyType = z.infer<
+  typeof CreatePermissionBodySchema
+>
 export type GetPermissionParamsType = z.infer<typeof GetPermissionParamsSchema>
-export type UpdatePermissionBodyType = z.infer<typeof UpdatePermissionBodySchema>
+export type UpdatePermissionBodyType = z.infer<
+  typeof UpdatePermissionBodySchema
+>

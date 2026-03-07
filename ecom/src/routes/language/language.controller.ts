@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, Put } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Param,
+  Put,
+} from '@nestjs/common'
 import { LanguageService } from './language.service'
 import {
   GetLanguageDetailResDTO,

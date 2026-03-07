@@ -101,8 +101,14 @@ export const ForgotPasswordBodySchema = z
   .object({
     email: z.string().email('Error.InvalidEmail'),
     code: z.string().length(6, 'Error.InvalidCode'),
-    newPassword: z.string().min(6, 'Error.InvalidPassword').max(100, 'Error.InvalidPassword'),
-    confirmNewPassword: z.string().min(6, 'Error.InvalidPassword').max(100, 'Error.InvalidPassword'),
+    newPassword: z
+      .string()
+      .min(6, 'Error.InvalidPassword')
+      .max(100, 'Error.InvalidPassword'),
+    confirmNewPassword: z
+      .string()
+      .min(6, 'Error.InvalidPassword')
+      .max(100, 'Error.InvalidPassword'),
   })
   .strict()
   .superRefine(({ newPassword, confirmNewPassword }, ctx) => {
@@ -154,5 +160,7 @@ export type DeviceType = z.infer<typeof DeviceModelSchema>
 export type RoleType = z.infer<typeof RoleSchema>
 export type LogoutBodyType = RefreshTokenBodyType
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>
-export type DisableTwoFactorBodyType = z.infer<typeof DisableTwoFactorBodySchema>
+export type DisableTwoFactorBodyType = z.infer<
+  typeof DisableTwoFactorBodySchema
+>
 export type TwoFactorSetupResType = z.infer<typeof TwoFactorSetupResSchema>

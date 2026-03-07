@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { CreateLanguageBodyType, LanguageType, UpdateLanguageBodyType } from './language.model'
+import {
+  CreateLanguageBodyType,
+  LanguageType,
+  UpdateLanguageBodyType,
+} from './language.model'
 import { PrismaService } from 'src/shared/services/prisma.service'
 
 @Injectable()
@@ -22,7 +26,13 @@ export class LanguageRepository {
     })
   }
 
-  create({ createdById, data }: { createdById: number; data: CreateLanguageBodyType }): Promise<LanguageType | null> {
+  create({
+    createdById,
+    data,
+  }: {
+    createdById: number
+    data: CreateLanguageBodyType
+  }): Promise<LanguageType | null> {
     return this.prismaService.language.create({
       data: {
         ...data,

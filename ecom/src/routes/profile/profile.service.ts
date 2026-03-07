@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
-import { InvalidPasswordException, NotFoundRecordException } from 'src/shared/error'
-import { ChangePasswordBodyType, UpdateMeBodySchema, UpdateMeBodyType } from './profile.model'
+import {
+  InvalidPasswordException,
+  NotFoundRecordException,
+} from 'src/shared/error'
+import { ChangePasswordBodyType, UpdateMeBodyType } from './profile.model'
 import { SharedUserRepository } from 'src/shared/repositories/shared-user.repository'
 import { HashingService } from 'src/shared/services/hashing.service'
 import { isUniqueConstraintPrismaError } from 'src/shared/helpers'
@@ -13,10 +16,11 @@ export class ProfileService {
   ) {}
 
   async getProfile(userId: number) {
-    const user = await this.sharedUserRepository.findUniqueIncludeRolePermissions({
-      id: userId,
-      deletedAt: null,
-    })
+    const user =
+      await this.sharedUserRepository.findUniqueIncludeRolePermissions({
+        id: userId,
+        deletedAt: null,
+      })
 
     if (!user) {
       throw NotFoundRecordException
@@ -25,7 +29,13 @@ export class ProfileService {
     return user
   }
 
-  async updateProfile({ userId, body }: { userId: number; body: UpdateMeBodyType }) {
+  async updateProfile({
+    userId,
+    body,
+  }: {
+    userId: number
+    body: UpdateMeBodyType
+  }) {
     try {
       return await this.sharedUserRepository.update(
         { id: userId, deletedAt: null },
@@ -42,7 +52,13 @@ export class ProfileService {
     }
   }
 
-  async changePassword({ userId, body }: { userId: number; body: Omit<ChangePasswordBodyType, 'confirmNewPassword'> }) {
+  async changePassword({
+    userId,
+    body,
+  }: {
+    userId: number
+    body: Omit<ChangePasswordBodyType, 'confirmNewPassword'>
+  }) {
     try {
       const { password, newPassword } = body
       const user = await this.sharedUserRepository.findUnique({
@@ -52,7 +68,10 @@ export class ProfileService {
       if (!user) {
         throw NotFoundRecordException
       }
-      const isPasswordMatch = await this.hashingService.compare(password, user.password)
+      const isPasswordMatch = await this.hashingService.compare(
+        password,
+        user.password,
+      )
       if (!isPasswordMatch) {
         throw InvalidPasswordException
       }

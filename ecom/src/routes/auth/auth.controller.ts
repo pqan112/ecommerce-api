@@ -1,4 +1,11 @@
-import { Body, Controller, HttpCode, HttpStatus, Ip, Post } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  HttpCode,
+  HttpStatus,
+  Ip,
+  Post,
+} from '@nestjs/common'
 import { ZodSerializerDto } from 'nestjs-zod'
 import { AuthService } from 'src/routes/auth/auth.service'
 import { UserAgent } from 'src/shared/decorators/user-agent.decorator'
@@ -43,7 +50,11 @@ export class AuthController {
   @IsPublic()
   @ZodSerializerDto(LoginResDTO)
   @HttpCode(HttpStatus.OK)
-  async login(@Body() body: LoginBodyDTO, @UserAgent() userAgent: string, @Ip() ip: string) {
+  async login(
+    @Body() body: LoginBodyDTO,
+    @UserAgent() userAgent: string,
+    @Ip() ip: string,
+  ) {
     return this.authService.login({ ...body, userAgent, ip })
   }
 
@@ -51,8 +62,16 @@ export class AuthController {
   @IsPublic()
   @ZodSerializerDto(RefreshTokenResDTO)
   @HttpCode(HttpStatus.OK)
-  refreshToken(@Body() body: RefreshTokenBodyDTO, @UserAgent() userAgent: string, @Ip() ip: string) {
-    return this.authService.refreshToken({ refreshToken: body.refreshToken, userAgent, ip })
+  refreshToken(
+    @Body() body: RefreshTokenBodyDTO,
+    @UserAgent() userAgent: string,
+    @Ip() ip: string,
+  ) {
+    return this.authService.refreshToken({
+      refreshToken: body.refreshToken,
+      userAgent,
+      ip,
+    })
   }
 
   @Post('logout')
@@ -78,7 +97,10 @@ export class AuthController {
 
   @Post('2fa/disable')
   @ZodSerializerDto(MessageResDTO)
-  disableTwoFactorAuth(@Body() body: DisableTwoFactorBodyDTO, @ActiveUser() userId: number) {
+  disableTwoFactorAuth(
+    @Body() body: DisableTwoFactorBodyDTO,
+    @ActiveUser() userId: number,
+  ) {
     return this.authService.disableTwoFactorAuth({ ...body, userId })
   }
 }

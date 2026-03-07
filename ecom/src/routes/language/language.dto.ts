@@ -9,10 +9,18 @@ import {
 
 export class GetLanguagesResDTO extends createZodDto(GetLanguagesResSchema) {}
 
-export class GetLanguageParamsDTO extends createZodDto(GetLanguageParamsSchema) {}
+export class GetLanguageParamsDTO extends createZodDto(
+  GetLanguageParamsSchema,
+) {}
 
-export class GetLanguageDetailResDTO extends createZodDto(GetLanguageDetailResSchema) {}
+export class GetLanguageDetailResDTO extends createZodDto(
+  GetLanguageDetailResSchema,
+) {}
 
-export class CreateLanguageBodyDTO extends createZodDto(CreateLanguageBodySchema) {}
+export class CreateLanguageBodyDTO extends createZodDto(
+  CreateLanguageBodySchema,
+) {}
 
-export class UpdateLanguageBodyDTO extends createZodDto(UpdateLanguageBodySchema) {}
+export class UpdateLanguageBodyDTO extends createZodDto(
+  UpdateLanguageBodySchema,
+) {}

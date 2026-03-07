@@ -23,7 +23,15 @@ export class TwoFactorService {
     }
   }
 
-  verifyTOTP({ email, token, secret }: { email: string; token: string; secret: string }) {
+  verifyTOTP({
+    email,
+    token,
+    secret,
+  }: {
+    email: string
+    token: string
+    secret: string
+  }) {
     const totp = this.createTOTP(email, secret)
     const delta = totp.validate({ token, window: 1 })
     return delta !== null

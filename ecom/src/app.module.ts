@@ -13,7 +13,14 @@ import { RoleModule } from './routes/role/role.module'
 import { ProfileModule } from './routes/profile/profile.module'
 
 @Module({
-  imports: [SharedModule, AuthModule, LanguageModule, PermissionModule, RoleModule, ProfileModule],
+  imports: [
+    SharedModule,
+    AuthModule,
+    LanguageModule,
+    PermissionModule,
+    RoleModule,
+    ProfileModule,
+  ],
   controllers: [AppController],
   providers: [
     AppService,

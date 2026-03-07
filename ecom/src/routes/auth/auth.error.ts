@@ -1,4 +1,7 @@
-import { UnauthorizedException, UnprocessableEntityException } from '@nestjs/common'
+import {
+  UnauthorizedException,
+  UnprocessableEntityException,
+} from '@nestjs/common'
 
 export const InvalidOTPException = new UnprocessableEntityException([
   {
@@ -33,8 +36,12 @@ export const EmailSendFailureException = new UnprocessableEntityException([
   },
 ])
 
-export const RefreshTokenAlreadyUsedException = new UnauthorizedException('Error.RefreshTokenAlreadyUsed')
-export const UnauthorizedAccessException = new UnauthorizedException('Error.UnauthorizedAccess')
+export const RefreshTokenAlreadyUsedException = new UnauthorizedException(
+  'Error.RefreshTokenAlreadyUsed',
+)
+export const UnauthorizedAccessException = new UnauthorizedException(
+  'Error.UnauthorizedAccess',
+)
 
 export const IncorrectPasswordException = new UnprocessableEntityException([
   {

@@ -7,8 +7,14 @@ import {
   GetPermissionsQueryType,
   UpdatePermissionBodyType,
 } from './permission.model'
-import { NotFoundRecordException, PermissionAlreadyExistsException } from './permission.error'
-import { isNotFoundPrismaError, isUniqueConstraintPrismaError } from 'src/shared/helpers'
+import {
+  NotFoundRecordException,
+  PermissionAlreadyExistsException,
+} from './permission.error'
+import {
+  isNotFoundPrismaError,
+  isUniqueConstraintPrismaError,
+} from 'src/shared/helpers'
 
 @Injectable()
 export class PermissionService {
@@ -23,7 +29,9 @@ export class PermissionService {
     return data
   }
 
-  async findById(params: GetPermissionParamsType): Promise<GetPermissionDetailResType> {
+  async findById(
+    params: GetPermissionParamsType,
+  ): Promise<GetPermissionDetailResType> {
     const permission = await this.permissionRepo.findById(params)
     if (!permission) {
       throw NotFoundRecordException
@@ -31,7 +39,13 @@ export class PermissionService {
     return permission
   }
 
-  async create({ data, createdById }: { data: CreatePermissionBodyType; createdById: number }) {
+  async create({
+    data,
+    createdById,
+  }: {
+    data: CreatePermissionBodyType
+    createdById: number
+  }) {
     try {
       return await this.permissionRepo.create({ createdById, data })
     } catch (error) {
@@ -42,7 +56,15 @@ export class PermissionService {
     }
   }
 
-  async update({ data, id, updatedById }: { data: UpdatePermissionBodyType; id: number; updatedById: number }) {
+  async update({
+    data,
+    id,
+    updatedById,
+  }: {
+    data: UpdatePermissionBodyType
+    id: number
+    updatedById: number
+  }) {
     try {
       const permission = await this.permissionRepo.update({
         id,

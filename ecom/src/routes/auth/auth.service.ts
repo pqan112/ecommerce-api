@@ -39,20 +39,19 @@ import {
   TOTPNotEnabledException,
   UnauthorizedAccessException,
 } from './auth.error'
-import { RolesService } from './roles.service'
 import { TwoFactorService } from 'src/shared/services/2fa.service'
+import { SharedRoleRepo } from 'src/shared/repositories/shared-role.repo'
 
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly rolesService: RolesService,
     private readonly hashingService: HashingService,
     private readonly authRepository: AuthRepository,
     private readonly tokenService: TokenService,
+    private readonly sharedRoleRepo: SharedRoleRepo,
     private readonly sharedUserRepository: SharedUserRepository,
     private readonly emailService: EmailService,
     private readonly twoFactorService: TwoFactorService,
-    private readonly,
   ) {}
 
   private async generateTokens(payload: AccessTokenPayloadCreate) {
@@ -119,7 +118,7 @@ export class AuthService {
       })
       // 2. Đăng ký
       // mặc định đăng ký tài khoản là người dùng là client -> getClientRoleId
-      const clientRoleId = await this.rolesService.getClientRoleId()
+      const clientRoleId = await this.sharedRoleRepo.getClientRoleId()
       const hashedPassword = await this.hashingService.hash(body.password)
       const [user] = await Promise.all([
         this.authRepository.createUser({

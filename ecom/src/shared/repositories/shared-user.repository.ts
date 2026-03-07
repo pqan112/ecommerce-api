@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../services/prisma.service'
 import { UserType } from '../models/shared-user.model'
-import { RoleType } from 'src/routes/auth/auth.model'
 import { PermissionType } from '../models/shared-permission.model'
+import { RoleType } from '../models/shared-role.model'
 
 export type WhereUniqueUserType =
   | { id: number; [key: string]: any }

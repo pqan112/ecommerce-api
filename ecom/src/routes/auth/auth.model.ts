@@ -157,7 +157,6 @@ export type RefreshTokenType = z.infer<typeof RefreshTokenSchema>
 export type RefreshTokenBodyType = z.infer<typeof RefreshTokenBodySchema>
 export type RefreshTokenResType = z.infer<typeof RefreshTokenResSchema>
 export type DeviceType = z.infer<typeof DeviceModelSchema>
-export type RoleType = z.infer<typeof RoleSchema>
 export type LogoutBodyType = RefreshTokenBodyType
 export type ForgotPasswordBodyType = z.infer<typeof ForgotPasswordBodySchema>
 export type DisableTwoFactorBodyType = z.infer<

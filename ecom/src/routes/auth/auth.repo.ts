@@ -6,10 +6,11 @@ import {
   DeviceType,
   RefreshTokenType,
   RegisterBodyType,
-  RoleType,
   VerificationCodeType,
 } from './auth.model'
 import { WhereUniqueUserType } from 'src/shared/repositories/shared-user.repository'
+import { RoleType } from 'src/shared/models/shared-role.model'
+
 @Injectable()
 export class AuthRepository {
   constructor(private readonly prismaService: PrismaService) {}

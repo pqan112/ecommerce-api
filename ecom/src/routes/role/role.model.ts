@@ -46,7 +46,6 @@ export const UpdateRoleBodySchema = RoleSchema.pick({
   })
   .strict()
 
-export type RoleType = z.infer<typeof RoleSchema>
 export type RoleWithPermissionsType = z.infer<typeof RoleWithPermissionsSchema>
 export type GetRolesResType = z.infer<typeof GetRolesResSchema>
 export type GetRolesQueryType = z.infer<typeof GetRolesQuerySchema>

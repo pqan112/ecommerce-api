@@ -4,12 +4,12 @@ import {
   GetRoleParamsType,
   GetRolesQueryType,
   GetRolesResType,
-  RoleType,
   RoleWithPermissionsType,
   UpdateRoleBodyType,
 } from './role.model'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { OneOfPermissionIdsHasBeenDeleted } from './role.error'
+import { RoleType } from 'src/shared/models/shared-role.model'
 
 @Injectable()
 export class RoleRepo {

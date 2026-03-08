@@ -11,6 +11,7 @@ import { LanguageModule } from './routes/language/language.module'
 import { PermissionModule } from './routes/permission/permission.module'
 import { RoleModule } from './routes/role/role.module'
 import { ProfileModule } from './routes/profile/profile.module'
+import { UserModule } from './routes/user/user.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { ProfileModule } from './routes/profile/profile.module'
     PermissionModule,
     RoleModule,
     ProfileModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [

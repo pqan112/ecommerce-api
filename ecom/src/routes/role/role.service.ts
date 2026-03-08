@@ -7,7 +7,6 @@ import {
 } from './role.model'
 import { RoleRepo } from './role.repo'
 import {
-  NotFoundRecordException,
   ProhibitedActionOnBaseRoleException,
   RoleAlreadyExistsException,
 } from './role.error'
@@ -16,6 +15,7 @@ import {
   isUniqueConstraintPrismaError,
 } from 'src/shared/helpers'
 import { RoleName } from 'src/shared/constants/role.constant'
+import { NotFoundRecordException } from 'src/shared/error'
 
 @Injectable()
 export class RoleService {

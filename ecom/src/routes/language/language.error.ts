@@ -1,4 +1,4 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { UnprocessableEntityException } from '@nestjs/common'
 
 export const LanguageAlreadyExistsException = new UnprocessableEntityException([
   {
@@ -6,5 +6,3 @@ export const LanguageAlreadyExistsException = new UnprocessableEntityException([
     path: 'id',
   },
 ])
-
-export const NotFoundRecordException = new NotFoundException('Error.NotFound')

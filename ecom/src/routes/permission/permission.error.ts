@@ -1,8 +1,4 @@
-import { NotFoundException, UnprocessableEntityException } from '@nestjs/common'
-
-export const NotFoundRecordException = new NotFoundException(
-  'Error.Permission.NotFound',
-)
+import { UnprocessableEntityException } from '@nestjs/common'
 
 export const PermissionAlreadyExistsException =
   new UnprocessableEntityException([

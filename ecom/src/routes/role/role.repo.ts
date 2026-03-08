@@ -4,12 +4,14 @@ import {
   GetRoleParamsType,
   GetRolesQueryType,
   GetRolesResType,
-  RoleWithPermissionsType,
   UpdateRoleBodyType,
 } from './role.model'
 import { PrismaService } from 'src/shared/services/prisma.service'
 import { OneOfPermissionIdsHasBeenDeleted } from './role.error'
-import { RoleType } from 'src/shared/models/shared-role.model'
+import {
+  RolePermissionsType,
+  RoleType,
+} from 'src/shared/models/shared-role.model'
 
 @Injectable()
 export class RoleRepo {
@@ -43,7 +45,7 @@ export class RoleRepo {
     }
   }
 
-  findById(params: GetRoleParamsType): Promise<RoleWithPermissionsType | null> {
+  findById(params: GetRoleParamsType): Promise<RolePermissionsType | null> {
     return this.prismaService.role.findUnique({
       where: { id: params.roleId, deletedAt: null },
       include: {
